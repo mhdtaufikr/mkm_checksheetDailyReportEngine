@@ -6,6 +6,7 @@ use App\Http\Controllers\DropdownController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RulesController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ShopController;
 
 
 
@@ -47,5 +48,8 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/user/update/{user}', [UserController::class, 'update'])->middleware(['checkRole:IT']);
     Route::get('/user/revoke/{user}', [UserController::class, 'revoke'])->middleware(['checkRole:IT']);
     Route::get('/user/access/{user}', [UserController::class, 'access'])->middleware(['checkRole:IT']);
+
+    //Shop Master
+
 
 });
