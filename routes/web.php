@@ -7,7 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RulesController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ShopController;
-
+use App\Http\Controllers\ChecksheetController;
 
 
 /*
@@ -27,7 +27,7 @@ Route::get('/logout', [AuthController::class, 'logout']);
 
 Route::middleware(['auth'])->group(function () {
     //Home Controller
-    Route::get('/home', [HomeController::class, 'index'])->name('checksheet');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
 
     //Dropdown Controller
     Route::get('/dropdown', [DropdownController::class, 'index'])->middleware(['checkRole:IT']);
@@ -50,6 +50,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user/access/{user}', [UserController::class, 'access'])->middleware(['checkRole:IT']);
 
     //Shop Master
+    Route::get('/mst/shop', [ShopController::class, 'index'])->middleware(['checkRole:IT']);
+    Route::post('/mst/shop/store', [ShopController::class, 'store'])->middleware(['checkRole:IT']);
+    Route::patch('/mst/shop/update/{id}', [ShopController::class, 'update'])->middleware(['checkRole:IT']);
+    Route::delete('/mst/shop/delete/{id}', [ShopController::class, 'delete'])->middleware(['checkRole:IT']);
 
+    //Checksheet
+    Route::get('/checksheet',[ChecksheetController::class, 'index'])->middleware(['checkRole:IT']);
+    Route::post('/checksheet/store',[ChecksheetController::class, 'store'])->middleware(['checkRole:IT']);
+    Route::get('/checksheet/form/{id}',[ChecksheetController::class, 'showForm'])->middleware(['checkRole:IT'])->name('form');
+    Route::post('/checksheet/detail/store',[ChecksheetController::class, 'storeDetail'])->middleware(['checkRole:IT']);
 
 });

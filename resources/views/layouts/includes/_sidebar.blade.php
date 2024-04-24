@@ -23,7 +23,7 @@
                  </a>
                  <div class="collapse" id="collapsemaster" data-bs-parent="#accordionSidenav">
                     <nav class="sidenav-menu-nested nav">
-                        <a class="nav-link" href="{{url('/master/mechine')}}">Shop</a>
+                        <a class="nav-link" href="{{url('/mst/shop')}}">Shop</a>
                      </nav>
                  </div>
                 @if(\Auth::user()->role === 'IT')

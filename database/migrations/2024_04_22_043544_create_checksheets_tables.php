@@ -8,7 +8,7 @@ class CreateChecksheetsTables extends Migration
 {
     public function up()
     {
-        Schema::create('checksheets_header', function (Blueprint $table) {
+        Schema::create('checksheets_headers', function (Blueprint $table) {
             $table->id();
             $table->string('dept');
             $table->string('section');
@@ -19,7 +19,7 @@ class CreateChecksheetsTables extends Migration
             $table->timestamps();
         });
 
-        Schema::create('checksheets_detail', function (Blueprint $table) {
+        Schema::create('checksheets_details', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_checksheet');
             $table->foreign('id_checksheet')->references('id')->on('checksheets_header')->onDelete('cascade');
@@ -38,7 +38,7 @@ class CreateChecksheetsTables extends Migration
             $table->timestamps();
         });
 
-        Schema::create('shop_master', function (Blueprint $table) {
+        Schema::create('shop_masters', function (Blueprint $table) {
             $table->id();
             $table->string('shop');
             $table->string('model');

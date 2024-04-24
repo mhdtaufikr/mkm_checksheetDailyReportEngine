@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class ChecksheetHeader extends Model
 {
     use HasFactory;
+    protected $table = 'checksheets_headers';
+    protected $guarded=[
+        'id'
+    ];
 }
