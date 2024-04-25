@@ -153,6 +153,9 @@
                   <thead>
                   <tr>
                     <th>No</th>
+                    <th>No. Document</th>
+                    <th>Date</th>
+                    <th>Shift</th>
                     <th>Action</th>
                   </tr>
                   </thead>
@@ -163,17 +166,23 @@
                     @foreach ($item as $data)
                     <tr>
                         <td>{{ $no++ }}</td>
+                        <td>{{$data->no_document}}</td>
+                        <td>{{$data->date}}</td>
+                        <td>{{$data->shift}}</td>
                         <td>
 
-                                <button title="Edit Dropdown" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#modal-update{{ $data->id }}">
+                                <button title="Edit Checksheet" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#modal-update{{ $data->id }}">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button title="Delete Dropdown" class="btn btn-danger btn-sm me-2" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->id }}">
+                                <button title="Delete Checksheet" class="btn btn-danger btn-sm me-2" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->id }}">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
-                                <a href="{{ url('/checksheet/form/' . encrypt($data->id)) }}" class="btn btn-success btn-sm" title="Continue Work">
-                                    <i class="fas fa-arrow-circle-right"></i>
-                                </a>
+                                <a title="Detail Checksheet" href="{{url('/checksheet/detail/'.encrypt($data->id))}}" class="btn btn-info btn-sm me-2"><i class="fas fa-info"></i></a>
+                                @if($data->status == 0)
+                                    <a href="{{ url('/checksheet/form/' . encrypt($data->id)) }}" class="btn btn-success btn-sm" title="Continue Work">
+                                        <i class="fas fa-arrow-circle-right"></i>
+                                    </a>
+                                @endif
                         </td>
                     </tr>
 

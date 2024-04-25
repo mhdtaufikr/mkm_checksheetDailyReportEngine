@@ -5,8 +5,10 @@ use App\Models\ChecksheetHeader;
 use App\Models\ChecksheetDetail;
 use App\Models\Dropdown;
 use App\Models\ShopMaster;
+use App\Models\ChecksheetFooter;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ChecksheetController extends Controller
 {
@@ -34,6 +36,7 @@ class ChecksheetController extends Controller
         $checksheetHeader->section = $request->section;
         $checksheetHeader->date = $request->date;
         $checksheetHeader->shift = $request->shift;
+        $checksheetHeader->status = 0;
         $checksheetHeader->revision = $request->revision;
         $checksheetHeader->no_document = $request->no_document;
 
@@ -54,8 +57,101 @@ class ChecksheetController extends Controller
         return view('checksheet.form',compact('item','shopMaster','groupedShopMaster','id'));
     }
 
-    public function storeDetail(Request $request){
-        dd($request->all());
+    public function storeDetail(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Store data into checksheets_details table
+            $dataDetail = [
+                'id' => $request->id,
+                'shop' => $request->shop,
+                'man_power_planning' => $request->man_power_planning,
+                'man_power_actual' => $request->man_power_actual,
+                'timefrom' => $request->timefrom,
+                'timeto' => $request->timeto,
+                'pic' => $request->pic,
+                'problem' => $request->problem,
+                'cause' => $request->cause,
+                'action' => $request->action,
+            ];
+
+            foreach ($dataDetail['shop'] as $index => $shop) {
+                $detail = new ChecksheetDetail();
+                $detail->id_checksheet = $dataDetail['id'];
+                $detail->shop = $shop;
+                $detail->mp_plan = $dataDetail['man_power_planning'][$index];
+                $detail->mp_actual = $dataDetail['man_power_actual'][$index];
+                $detail->time_from = $dataDetail['timefrom'][$index];
+                $detail->time_to = $dataDetail['timeto'][$index];
+                $detail->pic = $dataDetail['pic'][$index];
+                $detail->problem = $dataDetail['problem'][$index];
+                $detail->cause = $dataDetail['cause'][$index];
+                $detail->action = $dataDetail['action'][$index];
+                $detail->save();
+            }
+
+            // Store data into checksheet_footers table
+            $dataFooter = [
+                "model" => $request->model,
+                "shopAll" => $request->shopAll,
+                "production_planning" => $request->production_planning,
+                "production_actual" => $request->production_actual,
+                "production_different" => $request->production_different,
+            ];
+
+            foreach ($dataFooter['shopAll'] as $index => $shop) {
+                $id_checksheetdtl = ChecksheetDetail::where('shop', $shop)
+                    ->where('id_checksheet', $request->id)
+                    ->first()
+                    ->id;
+
+                $footer = new ChecksheetFooter();
+                $footer->id_checksheetdtl = $id_checksheetdtl;
+                $footer->model = $dataFooter['model'][$index];
+                $footer->prod_plan = $dataFooter['production_planning'][$index];
+                $footer->prod_actual = $dataFooter['production_actual'][$index];
+                $footer->prod_diff = $dataFooter['production_different'][$index];
+                $footer->save();
+            }
+
+            // Update checksheets_headers status to 1
+            $header = ChecksheetHeader::find($request->id);
+            $header->status = 1;
+            $header->save();
+
+            DB::commit();
+
+            return redirect()->route('checksheet.index')->with('status', 'success');
+        } catch (Exception $e) {
+            DB::rollBack();
+            return redirect()->route('checksheet.index')->with('status', 'failed')->with('error', $e->getMessage());
+        }
+    }
+
+    public function detail($id){
+        $id = decrypt($id);
+        $item = ChecksheetHeader::where('id',$id)->first();
+       // Fetch the details
+            $details = ChecksheetDetail::where('id_checksheet', $id)->get();
+
+            // Initialize an empty array to store footer data
+        $footers = [];
+
+        // Loop through each detail
+        foreach ($details as $detail) {
+            // Fetch the footer corresponding to the current detail
+            $footer = ChecksheetFooter::where('id_checksheetdtl', $detail->id)->get();
+
+            // If a corresponding footer is found, merge it into the footers array
+            if ($footer) {
+                $footers = array_merge($footers, $footer->toArray());
+            }
+        }
+
+
+                // Pass the fetched data to the view
+                return view('checksheet.detail',compact('details','footers','item','id'));
     }
 
 }

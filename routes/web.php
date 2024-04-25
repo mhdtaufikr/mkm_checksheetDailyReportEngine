@@ -56,9 +56,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/mst/shop/delete/{id}', [ShopController::class, 'delete'])->middleware(['checkRole:IT']);
 
     //Checksheet
-    Route::get('/checksheet',[ChecksheetController::class, 'index'])->middleware(['checkRole:IT']);
+    Route::get('/checksheet', [ChecksheetController::class, 'index'])->name('checksheet.index')->middleware(['checkRole:IT']);
     Route::post('/checksheet/store',[ChecksheetController::class, 'store'])->middleware(['checkRole:IT']);
     Route::get('/checksheet/form/{id}',[ChecksheetController::class, 'showForm'])->middleware(['checkRole:IT'])->name('form');
     Route::post('/checksheet/detail/store',[ChecksheetController::class, 'storeDetail'])->middleware(['checkRole:IT']);
+    Route::get('/checksheet/detail/{id}', [ChecksheetController::class, 'detail'])->middleware(['checkRole:IT']);
 
 });

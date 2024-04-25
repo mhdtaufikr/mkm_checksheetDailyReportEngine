@@ -20,6 +20,7 @@
             <section class="content">
                 <div class="container-fluid">
                 <form action="{{ url('/checksheet/detail/store') }}" method="POST">
+                    @csrf
                     <div class="row">
                         <div class="col-12">
                             <div class="card">
@@ -32,14 +33,15 @@
                                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                                         @foreach($groupedShopMaster as $key => $models)
                                         <li class="nav-item">
-                                            <a style="color: black" class="nav-link {{ $loop->first ? 'active' : '' }}" id="nav-{{ $key }}-tab" data-bs-toggle="tab" href="#nav-{{ Str::slug($key) }}" role="tab" aria-controls="nav-{{ Str::slug($key) }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}">{{ $key }}</a>
+                                            <a style="color: black; font-size:13.9px;" class="nav-link {{ $loop->first ? 'active' : '' }}" id="nav-{{ $key }}-tab" data-bs-toggle="tab" href="#nav-{{ Str::slug($key) }}" role="tab" aria-controls="nav-{{ Str::slug($key) }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}">{{ $key }}</a>
                                         </li>
                                         @endforeach
                                     </ul>
                                     <div class="tab-content" id="myTabContent">
+                                        <input type="text" name="id" value="{{$id}}" hidden>
                                         @foreach($groupedShopMaster as $key => $models)
-                                        @csrf
                                         <div class="tab-pane fade {{ $loop->first ? 'show active' : '' }}" id="nav-{{ Str::slug($key) }}" role="tabpanel" aria-labelledby="nav-{{ $key }}-tab">
+                                            <input type="hidden" name="shop[]" value="{{ $key }}">
                                             <div class="form-group mt-4">
                                                 <div class="row">
                                                     <div class="col-md-2">
@@ -50,9 +52,13 @@
                                                         <label for="man_power_actual">Man Power Actual</label>
                                                         <input type="number" name="man_power_actual[]" class="form-control" style="width: 100px;" value="0" min="0">
                                                     </div>
-                                                    <div class="col-md-4">
-                                                        <label for="time">Time</label>
-                                                        <input type="time" name="time[]" class="form-control">
+                                                    <div class="col-md-2">
+                                                        <label for="time">Time From</label>
+                                                        <input type="time" name="timefrom[]" class="form-control">
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <label for="time">Time Until</label>
+                                                        <input type="time" name="timeto[]" class="form-control">
                                                     </div>
                                                     <div class="col-md-4">
                                                         <label for="pic">PIC</label>
@@ -89,7 +95,7 @@
                                                         @foreach($models as $model)
                                                         <tr>
                                                             <input type="hidden" name="model[]" value="{{ $model->model }}">
-                                                            <input type="hidden" name="shop[]" value="{{ $model->shop }}">
+                                                            <input type="hidden" name="shopAll[]" value="{{ $model->shop }}">
                                                             <td>{{ $model->model }}</td>
                                                             <td><input type="number" name="production_planning[]" class="production-planning" style="width: 70px;" value="0" min="0"></td>
                                                             <td><input type="number" name="production_actual[]" class="production-actual" style="width: 70px;" value="0" min="0"></td>
