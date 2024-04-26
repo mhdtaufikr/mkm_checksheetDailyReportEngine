@@ -61,5 +61,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/checksheet/form/{id}',[ChecksheetController::class, 'showForm'])->middleware(['checkRole:IT'])->name('form');
     Route::post('/checksheet/detail/store',[ChecksheetController::class, 'storeDetail'])->middleware(['checkRole:IT']);
     Route::get('/checksheet/detail/{id}', [ChecksheetController::class, 'detail'])->middleware(['checkRole:IT']);
+    Route::delete('/checksheet/delete/{id}', [ChecksheetController::class, 'delete'])->middleware(['checkRole:IT']);
+
 
 });

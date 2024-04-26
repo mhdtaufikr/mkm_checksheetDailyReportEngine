@@ -154,4 +154,40 @@ class ChecksheetController extends Controller
                 return view('checksheet.detail',compact('details','footers','item','id'));
     }
 
+    public function delete($id)
+    {
+
+        try {
+            // Start a database transaction
+            DB::beginTransaction();
+
+            // Find the checksheet header
+            $checksheetHeader = ChecksheetHeader::findOrFail($id);
+
+            // Find and delete associated details
+            $details = ChecksheetDetail::where('id_checksheet', $id)->get();
+            foreach ($details as $detail) {
+                // Delete associated footers first
+                ChecksheetFooter::where('id_checksheetdtl', $detail->id)->delete();
+                // Then delete the detail
+                $detail->delete();
+            }
+
+            // Now delete the header
+            $checksheetHeader->delete();
+
+            // Commit the transaction
+            DB::commit();
+
+            // Redirect or return success response
+            return redirect()->back()->with('success', 'Checksheet deleted successfully.');
+        } catch (\Exception $e) {
+            // Rollback the transaction if an error occurs
+            DB::rollBack();
+
+            // Handle the error, log it, or return an error response
+            return redirect()->back()->with('error', 'Failed to delete checksheet.');
+        }
+    }
+
 }

@@ -40,7 +40,7 @@
           <div class="col-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Checksheet Daily Report</h3>
+                <h3 class="card-title">Checksheet Daily Report (LD - PRODE-0007)</h3>
               </div>
 
               <!-- /.card-header -->
@@ -153,9 +153,9 @@
                   <thead>
                   <tr>
                     <th>No</th>
-                    <th>No. Document</th>
                     <th>Date</th>
                     <th>Shift</th>
+                    <th>Status</th>
                     <th>Action</th>
                   </tr>
                   </thead>
@@ -166,70 +166,42 @@
                     @foreach ($item as $data)
                     <tr>
                         <td>{{ $no++ }}</td>
-                        <td>{{$data->no_document}}</td>
-                        <td>{{$data->date}}</td>
+                        <td>{{ \Carbon\Carbon::parse($data->date)->format('d F Y') }}</td>
                         <td>{{$data->shift}}</td>
                         <td>
-
-                                <button title="Edit Checksheet" class="btn btn-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#modal-update{{ $data->id }}">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button title="Delete Checksheet" class="btn btn-danger btn-sm me-2" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->id }}">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                                <a title="Detail Checksheet" href="{{url('/checksheet/detail/'.encrypt($data->id))}}" class="btn btn-info btn-sm me-2"><i class="fas fa-info"></i></a>
-                                @if($data->status == 0)
-                                    <a href="{{ url('/checksheet/form/' . encrypt($data->id)) }}" class="btn btn-success btn-sm" title="Continue Work">
-                                        <i class="fas fa-arrow-circle-right"></i>
-                                    </a>
-                                @endif
+                            @if($data->status == 0)
+                                <span class="badge bg-warning">On Going</span>
+                            @else
+                                <span class="badge bg-success">Done</span>
+                            @endif
+                        </td>
+                        <td>
+                            <a title="Detail Checksheet" href="{{url('/checksheet/detail/'.encrypt($data->id))}}" class="btn btn-info btn-sm me-2"><i class="fas fa-info"></i></a>
+                            <button title="Delete Checksheet" class="btn btn-danger btn-sm me-2" data-bs-toggle="modal" data-bs-target="#modal-delete{{ $data->id }}">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                            @if($data->status == 0)
+                                <a href="{{ url('/checksheet/form/' . encrypt($data->id)) }}" class="btn btn-success btn-sm" title="Continue Work">
+                                    <i class="fas fa-arrow-circle-right"></i>
+                                </a>
+                            @endif
                         </td>
                     </tr>
-
-                    {{-- Modal Update --}}
-                    <div class="modal fade" id="modal-update{{ $data->id }}" tabindex="-1" aria-labelledby="modal-update{{ $data->id }}-label" aria-hidden="true">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h4 class="modal-title" id="modal-update{{ $data->id }}-label">Edit Dropdown</h4>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <form action="{{ url('/mst/shop/update/'.$data->id) }}" method="POST">
-                              @csrf
-                              @method('patch')
-                              <div class="modal-body">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" id="model_name" name="model_name" placeholder="Enter Model Name" required>
-                                </div>
-                                <br>
-                                <div class="form-group">
-                                  <input value="{{$data->model}}" type="text" class="form-control" id="model_name" name="model_name" placeholder="Enter Model Name" required>
-                                </div>
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Update</button>
-                              </div>
-                            </form>
-                          </div>
-                        </div>
-                      </div>
-                    {{-- Modal Update --}}
 
                     {{-- Modal Delete --}}
                     <div class="modal fade" id="modal-delete{{ $data->id }}" tabindex="-1" aria-labelledby="modal-delete{{ $data->id }}-label" aria-hidden="true">
                         <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                            <h4 class="modal-title" id="modal-delete{{ $data->id }}-label">Delete Shop Master</h4>
+                            <h4 class="modal-title" id="modal-delete{{ $data->id }}-label">Delete Checksheet</h4>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <form action="{{ url('/mst/shop/delete/'.$data->id) }}" method="POST">
+                            <form action="{{ url('/checksheet/delete/'.$data->id) }}" method="POST">
                             @csrf
                             @method('delete')
                             <div class="modal-body">
                                 <div class="form-group">
-                                Are you sure you want to delete <label for="Dropdown">{{ $data->model }}</label>?
+                                Are you sure you want to delete <label for="Dropdown">{{ \Carbon\Carbon::parse($data->date)->format('d F Y') }}</label>?
                                 </div>
                             </div>
                             <div class="modal-footer">
